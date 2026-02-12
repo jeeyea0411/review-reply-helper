@@ -420,10 +420,10 @@
                     <label data-i18n="additionalGuidelines">추가 작성 기준</label>
                     <div class="guidelines-list" id="guidelinesList">
                         <div class="guideline-item">
-                            <input type="text" data-i18n-placeholder="guidelinePlaceholder" data-i18n-value="guideline1">
+                            <input type="text" data-i18n-placeholder="guidelinePlaceholder" data-i18n-value="guideline1" value="감사 표현 포함하기">
                         </div>
                         <div class="guideline-item">
-                            <input type="text" data-i18n-placeholder="guidelineAddPlaceholder" data-i18n-value="guideline2">
+                            <input type="text" data-i18n-placeholder="guidelineAddPlaceholder" data-i18n-value="guideline2" value="고객의 의견을 경청하는 태도 보이기">
                         </div>
                     </div>
                     <button class="add-btn" onclick="addGuideline()" data-i18n="addGuidelineBtn">+ 기준 추가</button>
@@ -891,6 +891,16 @@
         document.getElementById('reviewContent').addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'Enter') {
                 generateReply();
+            }
+        });
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', function() {
+            // 초기 가이드라인 값 설정
+            const guidelineInputs = document.querySelectorAll('.guideline-item input');
+            if (guidelineInputs.length >= 2) {
+                guidelineInputs[0].value = translations[currentLanguage].guideline1;
+                guidelineInputs[1].value = translations[currentLanguage].guideline2;
             }
         });
     </script>
