@@ -896,12 +896,24 @@
 
         // 페이지 로드 시 초기화
         window.addEventListener('DOMContentLoaded', function() {
+            // 초기 언어(한국어)로 모든 텍스트 설정
+            const lang = currentLanguage;
+            
+            // placeholder 초기화
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+            
             // 초기 가이드라인 값 설정
-            const guidelineInputs = document.querySelectorAll('.guideline-item input');
-            if (guidelineInputs.length >= 2) {
-                guidelineInputs[0].value = translations[currentLanguage].guideline1;
-                guidelineInputs[1].value = translations[currentLanguage].guideline2;
-            }
+            document.querySelectorAll('[data-i18n-value]').forEach(element => {
+                const key = element.dataset.i18nValue;
+                if (translations[lang][key]) {
+                    element.value = translations[lang][key];
+                }
+            });
         });
     </script>
 </body>
