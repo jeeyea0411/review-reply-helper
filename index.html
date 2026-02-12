@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게임 리뷰 댓글 작성 도우미</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Sans+JP:wght@400;600&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #b8d4d3;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #7fa39b;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .language-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .language-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .language-btn.active {
+            background: white;
+            color: #7fa39b;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #7fa39b;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #7fa39b;
+            box-shadow: 0 0 0 3px rgba(127, 163, 155, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .guidelines-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .guideline-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .guideline-item input {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+        }
+
+        .add-btn {
+            width: 100%;
+            background: #8fb3ab;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            background: #7fa39b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(127, 163, 155, 0.3);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: #7fa39b;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(127, 163, 155, 0.4);
+            background: #6d8f88;
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #7fa39b;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            min-height: 150px;
+            color: #495057;
+        }
+
+        .result-box.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-style: italic;
+        }
+
+        .copy-btn {
+            width: 100%;
+            background: #8fb3ab;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .copy-btn:hover {
+            background: #7fa39b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(127, 163, 155, 0.3);
+        }
+
+        .copy-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .rating-select {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .rating-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .rating-option:hover {
+            border-color: #7fa39b;
+        }
+
+        .rating-option.active {
+            border-color: #7fa39b;
+            background: #7fa39b;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            color: #7fa39b;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .language-selector {
+                position: static;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            color: #495057;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 2px solid #7fa39b;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="language-selector">
+                <button class="language-btn active" onclick="changeLanguage('ko')" data-lang="ko">한국어</button>
+                <button class="language-btn" onclick="changeLanguage('en')" data-lang="en">English</button>
+                <button class="language-btn" onclick="changeLanguage('ja')" data-lang="ja">日本語</button>
+            </div>
+            <h1 data-i18n="title">📝 게임 스토어 리뷰 댓글 작성 도우미</h1>
+            <p data-i18n="subtitle">리뷰 내용과 작성 기준을 입력하면 적절한 댓글을 자동으로 제안해드립니다</p>
+        </div>
+
+        <div class="content">
+            <!-- 왼쪽: 리뷰 정보 입력 -->
+            <div class="section">
+                <h2 data-i18n="reviewInfo">리뷰 정보</h2>
+                
+                <div class="form-group">
+                    <label data-i18n="rating">리뷰 평점</label>
+                    <div class="rating-select">
+                        <div class="rating-option" data-rating="5">⭐⭐⭐⭐⭐</div>
+                        <div class="rating-option" data-rating="4">⭐⭐⭐⭐</div>
+                        <div class="rating-option" data-rating="3">⭐⭐⭐</div>
+                        <div class="rating-option" data-rating="2">⭐⭐</div>
+                        <div class="rating-option" data-rating="1">⭐</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="reviewContent">리뷰 내용</label>
+                    <textarea id="reviewContent" data-i18n-placeholder="reviewContentPlaceholder"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="gameNameRef">게임 명 - 참고용 (선택)</label>
+                    <input type="text" id="productName" data-i18n-placeholder="gameNameRefPlaceholder">
+                </div>
+            </div>
+
+            <!-- 오른쪽: 작성 기준 설정 -->
+            <div class="section">
+                <h2 data-i18n="writingGuidelines">작성 기준 설정</h2>
+                
+                <div class="form-group">
+                    <label data-i18n="prefix">말머리 (선택)</label>
+                    <input type="text" id="prefix" data-i18n-placeholder="prefixPlaceholder">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="honorific">호칭 (선택)</label>
+                    <input type="text" id="honorific" data-i18n-placeholder="honorificPlaceholder">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="gameNameUse">게임 명 - 사용할 명칭 (선택)</label>
+                    <input type="text" id="gameName" data-i18n-placeholder="gameNameUsePlaceholder">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="suffix">맺음말 (선택)</label>
+                    <input type="text" id="suffix" data-i18n-placeholder="suffixPlaceholder">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="tone">답변 톤앤매너</label>
+                    <select id="tone">
+                        <option value="friendly" data-i18n="toneFriendly">친근하고 따뜻한 톤</option>
+                        <option value="professional" data-i18n="toneProfessional">전문적이고 정중한 톤</option>
+                        <option value="casual" data-i18n="toneCasual">캐주얼하고 편안한 톤</option>
+                        <option value="formal" data-i18n="toneFormal">격식있고 공손한 톤</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="additionalGuidelines">추가 작성 기준</label>
+                    <div class="guidelines-list" id="guidelinesList">
+                        <div class="guideline-item">
+                            <input type="text" data-i18n-placeholder="guidelinePlaceholder" data-i18n-value="guideline1">
+                        </div>
+                        <div class="guideline-item">
+                            <input type="text" data-i18n-placeholder="guidelineAddPlaceholder" data-i18n-value="guideline2">
+                        </div>
+                    </div>
+                    <button class="add-btn" onclick="addGuideline()" data-i18n="addGuidelineBtn">+ 기준 추가</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 0 30px 30px;">
+            <button class="generate-btn" onclick="generateReply()" id="generateBtn" data-i18n="generateBtn">
+                💬 댓글 제안 생성하기
+            </button>
+
+            <div class="result-box empty" id="resultBox" data-i18n="resultEmpty">
+                생성된 댓글이 여기에 표시됩니다
+            </div>
+
+            <button class="copy-btn" onclick="copyToClipboard()" id="copyBtn" disabled data-i18n="copyBtn">
+                📋 댓글 복사하기
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" data-i18n="toastCopied">복사되었습니다!</div>
+
+    <script>
+        let selectedRating = null;
+        let currentLanguage = 'ko';
+
+        // 다국어 번역 데이터
+        const translations = {
+            ko: {
+                title: '📝 게임 스토어 리뷰 댓글 작성 도우미',
+                subtitle: '리뷰 내용과 작성 기준을 입력하면 적절한 댓글을 자동으로 제안해드립니다',
+                reviewInfo: '리뷰 정보',
+                rating: '리뷰 평점',
+                reviewContent: '리뷰 내용',
+                reviewContentPlaceholder: '고객이 남긴 리뷰 내용을 입력하세요...',
+                gameNameRef: '게임 명 - 참고용 (선택)',
+                gameNameRefPlaceholder: '예: 배틀그라운드 모바일 (리뷰 대상 게임)',
+                writingGuidelines: '작성 기준 설정',
+                prefix: '말머리 (선택)',
+                prefixPlaceholder: '예: 안녕하세요 고객님',
+                honorific: '호칭 (선택)',
+                honorificPlaceholder: '예: 고객님, 유저님, 플레이어님, 등',
+                gameNameUse: '게임 명 - 사용할 명칭 (선택)',
+                gameNameUsePlaceholder: '입력 시 댓글에 반드시 이 단어를 사용',
+                suffix: '맺음말 (선택)',
+                suffixPlaceholder: '예: 감사합니다, 좋은 하루 되세요, 등',
+                tone: '답변 톤앤매너',
+                toneFriendly: '친근하고 따뜻한 톤',
+                toneProfessional: '전문적이고 정중한 톤',
+                toneCasual: '캐주얼하고 편안한 톤',
+                toneFormal: '격식있고 공손한 톤',
+                additionalGuidelines: '추가 작성 기준',
+                guidelinePlaceholder: '예: 구체적인 개선 사항이 있으면 언급하기',
+                guideline1: '감사 표현 포함하기',
+                guideline2: '고객의 의견을 경청하는 태도 보이기',
+                guidelineAddPlaceholder: '추가 기준 입력...',
+                addGuidelineBtn: '+ 기준 추가',
+                generateBtn: '💬 댓글 제안 생성하기',
+                resultEmpty: '생성된 댓글이 여기에 표시됩니다',
+                copyBtn: '📋 댓글 복사하기',
+                toastCopied: '복사되었습니다!',
+                alertReviewContent: '리뷰 내용을 입력해주세요.',
+                generating: '생성 중...',
+                aiGenerating: '💭 AI가 최적의 댓글을 작성하고 있습니다...',
+                errorMessage: '❌ 댓글 생성 중 오류가 발생했습니다. 다시 시도해주세요.',
+                deleteBtn: '삭제'
+            },
+            en: {
+                title: '📝 Game Store Review Reply Assistant',
+                subtitle: 'Enter review details and writing guidelines to automatically generate appropriate replies',
+                reviewInfo: 'Review Information',
+                rating: 'Review Rating',
+                reviewContent: 'Review Content',
+                reviewContentPlaceholder: 'Enter the customer review content...',
+                gameNameRef: 'Game Name - Reference (Optional)',
+                gameNameRefPlaceholder: 'e.g., PUBG Mobile (Game being reviewed)',
+                writingGuidelines: 'Writing Guidelines',
+                prefix: 'Opening (Optional)',
+                prefixPlaceholder: 'e.g., Hello valued customer',
+                honorific: 'Title (Optional)',
+                honorificPlaceholder: 'e.g., Customer, User, Player, etc.',
+                gameNameUse: 'Game Name - Term to Use (Optional)',
+                gameNameUsePlaceholder: 'This term will be used in the reply',
+                suffix: 'Closing (Optional)',
+                suffixPlaceholder: 'e.g., Thank you, Have a great day, etc.',
+                tone: 'Reply Tone',
+                toneFriendly: 'Friendly and warm tone',
+                toneProfessional: 'Professional and polite tone',
+                toneCasual: 'Casual and comfortable tone',
+                toneFormal: 'Formal and respectful tone',
+                additionalGuidelines: 'Additional Guidelines',
+                guidelinePlaceholder: 'e.g., Mention specific improvements if any',
+                guideline1: 'Include expressions of gratitude',
+                guideline2: 'Show attitude of listening to customer feedback',
+                guidelineAddPlaceholder: 'Enter additional guideline...',
+                addGuidelineBtn: '+ Add Guideline',
+                generateBtn: '💬 Generate Reply Suggestion',
+                resultEmpty: 'Generated reply will appear here',
+                copyBtn: '📋 Copy Reply',
+                toastCopied: 'Copied!',
+                alertReviewContent: 'Please enter review content.',
+                generating: 'Generating...',
+                aiGenerating: '💭 AI is crafting the optimal reply...',
+                errorMessage: '❌ An error occurred while generating the reply. Please try again.',
+                deleteBtn: 'Delete'
+            },
+            ja: {
+                title: '📝 ゲームストアレビュー返信アシスタント',
+                subtitle: 'レビュー内容と作成基準を入力すると、適切な返信を自動的に提案します',
+                reviewInfo: 'レビュー情報',
+                rating: 'レビュー評価',
+                reviewContent: 'レビュー内容',
+                reviewContentPlaceholder: 'お客様が残したレビュー内容を入力してください...',
+                gameNameRef: 'ゲーム名 - 参考用（任意）',
+                gameNameRefPlaceholder: '例：PUBG Mobile（レビュー対象ゲーム）',
+                writingGuidelines: '作成基準設定',
+                prefix: '書き出し（任意）',
+                prefixPlaceholder: '例：お客様、こんにちは',
+                honorific: '敬称（任意）',
+                honorificPlaceholder: '例：お客様、ユーザー様、プレイヤー様など',
+                gameNameUse: 'ゲーム名 - 使用する名称（任意）',
+                gameNameUsePlaceholder: '入力時、返信に必ずこの言葉を使用',
+                suffix: '結び（任意）',
+                suffixPlaceholder: '例：ありがとうございます、良い一日をなど',
+                tone: '返信トーン',
+                toneFriendly: '親しみやすく温かいトーン',
+                toneProfessional: '専門的で丁寧なトーン',
+                toneCasual: 'カジュアルで気軽なトーン',
+                toneFormal: '格式ばった丁寧なトーン',
+                additionalGuidelines: '追加作成基準',
+                guidelinePlaceholder: '例：具体的な改善事項があれば言及する',
+                guideline1: '感謝の表現を含める',
+                guideline2: 'お客様の意見を傾聴する態度を示す',
+                guidelineAddPlaceholder: '追加基準を入力...',
+                addGuidelineBtn: '+ 基準追加',
+                generateBtn: '💬 返信提案を生成',
+                resultEmpty: '生成された返信がここに表示されます',
+                copyBtn: '📋 返信をコピー',
+                toastCopied: 'コピーしました！',
+                alertReviewContent: 'レビュー内容を入力してください。',
+                generating: '生成中...',
+                aiGenerating: '💭 AIが最適な返信を作成しています...',
+                errorMessage: '❌ 返信生成中にエラーが発生しました。もう一度お試しください。',
+                deleteBtn: '削除'
+            }
+        };
+
+        // 언어 변경 함수
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // 언어 버튼 활성화 상태 변경
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 모든 입력 필드 초기화
+            document.getElementById('reviewContent').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('prefix').value = '';
+            document.getElementById('honorific').value = '';
+            document.getElementById('gameName').value = '';
+            document.getElementById('suffix').value = '';
+            document.getElementById('tone').selectedIndex = 0;
+            
+            // 평점 선택 초기화
+            selectedRating = null;
+            document.querySelectorAll('.rating-option').forEach(opt => opt.classList.remove('active'));
+            
+            // 결과 박스 초기화
+            const resultBox = document.getElementById('resultBox');
+            resultBox.classList.add('empty');
+            document.getElementById('copyBtn').disabled = true;
+
+            // 가이드라인 목록 초기화 및 기본 2개 설정
+            const guidelinesList = document.getElementById('guidelinesList');
+            guidelinesList.innerHTML = `
+                <div class="guideline-item">
+                    <input type="text" data-i18n-placeholder="guidelinePlaceholder" data-i18n-value="guideline1">
+                </div>
+                <div class="guideline-item">
+                    <input type="text" data-i18n-placeholder="guidelineAddPlaceholder" data-i18n-value="guideline2">
+                </div>
+            `;
+
+            // 모든 텍스트 업데이트
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.dataset.i18n;
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // placeholder 업데이트
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.dataset.i18nPlaceholder;
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // value 업데이트 (초기 가이드라인)
+            document.querySelectorAll('[data-i18n-value]').forEach(element => {
+                const key = element.dataset.i18nValue;
+                if (translations[lang][key]) {
+                    element.value = translations[lang][key];
+                }
+            });
+
+            // select 옵션 업데이트
+            document.querySelectorAll('#tone option').forEach(option => {
+                const key = option.dataset.i18n;
+                if (translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+
+            // 결과 박스 empty 텍스트 업데이트
+            resultBox.textContent = translations[lang].resultEmpty;
+        }
+
+        // 평점 선택
+        document.querySelectorAll('.rating-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.rating-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                selectedRating = this.dataset.rating;
+            });
+        });
+
+        // 기준 추가
+        function addGuideline() {
+            const list = document.getElementById('guidelinesList');
+            const item = document.createElement('div');
+            item.className = 'guideline-item';
+            item.innerHTML = `
+                <input type="text" placeholder="${translations[currentLanguage].guidelineAddPlaceholder}">
+                <button class="remove-btn" onclick="removeGuideline(this)">${translations[currentLanguage].deleteBtn}</button>
+            `;
+            list.appendChild(item);
+        }
+
+        // 기준 삭제
+        function removeGuideline(btn) {
+            btn.parentElement.remove();
+        }
+
+        // 댓글 생성
+        async function generateReply() {
+            const reviewContent = document.getElementById('reviewContent').value.trim();
+            
+            if (!reviewContent) {
+                alert(translations[currentLanguage].alertReviewContent);
+                return;
+            }
+
+            const productName = document.getElementById('productName').value.trim();
+            const prefix = document.getElementById('prefix').value.trim();
+            const honorific = document.getElementById('honorific').value.trim();
+            const gameName = document.getElementById('gameName').value.trim();
+            const suffix = document.getElementById('suffix').value.trim();
+            const tone = document.getElementById('tone').value;
+            
+            const guidelines = Array.from(document.querySelectorAll('.guideline-item input'))
+                .map(input => input.value.trim())
+                .filter(val => val);
+
+            const generateBtn = document.getElementById('generateBtn');
+            const resultBox = document.getElementById('resultBox');
+            const copyBtn = document.getElementById('copyBtn');
+
+            generateBtn.disabled = true;
+            generateBtn.textContent = translations[currentLanguage].generating;
+            resultBox.innerHTML = `<div class="loading">${translations[currentLanguage].aiGenerating}</div>`;
+            resultBox.classList.add('empty');
+            copyBtn.disabled = true;
+
+            try {
+                // 언어별 프롬프트 구성
+                let prompt = '';
+                const languageMap = {
+                    ko: '한국어',
+                    en: 'English',
+                    ja: '日本語'
+                };
+
+                if (currentLanguage === 'ko') {
+                    prompt = `당신은 게임 스토어 리뷰에 답변하는 고객 응대 전문가입니다. 다음 정보를 바탕으로 적절한 댓글을 작성해주세요.\n\n`;
+                } else if (currentLanguage === 'en') {
+                    prompt = `You are a customer service expert responding to game store reviews. Please write an appropriate reply based on the following information.\n\n`;
+                } else if (currentLanguage === 'ja') {
+                    prompt = `あなたはゲームストアのレビューに返信するカスタマーサービスの専門家です。以下の情報に基づいて適切な返信を作成してください。\n\n`;
+                }
+                
+                if (selectedRating) {
+                    const ratingLabel = currentLanguage === 'ko' ? '평점' : currentLanguage === 'en' ? 'Rating' : '評価';
+                    const pointLabel = currentLanguage === 'ko' ? '점' : currentLanguage === 'en' ? 'stars' : '点';
+                    prompt += `${ratingLabel}: ${selectedRating}${pointLabel}\n`;
+                }
+                
+                const reviewLabel = currentLanguage === 'ko' ? '리뷰 내용' : currentLanguage === 'en' ? 'Review Content' : 'レビュー内容';
+                prompt += `${reviewLabel}: ${reviewContent}\n\n`;
+                
+                if (productName) {
+                    const gameLabel = currentLanguage === 'ko' ? '게임' : currentLanguage === 'en' ? 'Game' : 'ゲーム';
+                    prompt += `${gameLabel}: ${productName}\n\n`;
+                }
+
+                const criteriaLabel = currentLanguage === 'ko' ? '작성 기준' : currentLanguage === 'en' ? 'Writing Guidelines' : '作成基準';
+                prompt += `${criteriaLabel}:\n`;
+                
+                if (prefix) {
+                    const prefixLabel = currentLanguage === 'ko' ? '말머리' : currentLanguage === 'en' ? 'Opening' : '書き出し';
+                    const startLabel = currentLanguage === 'ko' ? '로 시작하기' : currentLanguage === 'en' ? 'Start with' : 'で始める';
+                    prompt += `- ${prefixLabel}: "${prefix}"${startLabel}\n`;
+                }
+                
+                if (honorific) {
+                    const honorificLabel = currentLanguage === 'ko' ? '호칭' : currentLanguage === 'en' ? 'Title' : '敬称';
+                    const addressLabel = currentLanguage === 'ko' ? '로 호칭하기' : currentLanguage === 'en' ? 'Address customer as' : 'として呼ぶ';
+                    prompt += `- ${honorificLabel}: "${honorific}"${addressLabel}\n`;
+                }
+
+                if (gameName) {
+                    const gameNameLabel = currentLanguage === 'ko' ? '게임 명' : currentLanguage === 'en' ? 'Game Name' : 'ゲーム名';
+                    const includeLabel = currentLanguage === 'ko' ? '댓글에 반드시 포함하기' : currentLanguage === 'en' ? 'Must include in reply' : '返信に必ず含める';
+                    prompt += `- ${gameNameLabel}: "${gameName}" ${includeLabel}\n`;
+                }
+                
+                if (suffix) {
+                    const suffixLabel = currentLanguage === 'ko' ? '맺음말' : currentLanguage === 'en' ? 'Closing' : '結び';
+                    const endLabel = currentLanguage === 'ko' ? '로 끝내기' : currentLanguage === 'en' ? 'End with' : 'で終える';
+                    prompt += `- ${suffixLabel}: "${suffix}"${endLabel}\n`;
+                }
+
+                const toneMap = {
+                    ko: {
+                        'friendly': '친근하고 따뜻한 톤',
+                        'professional': '전문적이고 정중한 톤',
+                        'casual': '캐주얼하고 편안한 톤',
+                        'formal': '격식있고 공손한 톤'
+                    },
+                    en: {
+                        'friendly': 'Friendly and warm tone',
+                        'professional': 'Professional and polite tone',
+                        'casual': 'Casual and comfortable tone',
+                        'formal': 'Formal and respectful tone'
+                    },
+                    ja: {
+                        'friendly': '親しみやすく温かいトーン',
+                        'professional': '専門的で丁寧なトーン',
+                        'casual': 'カジュアルで気軽なトーン',
+                        'formal': '格式ばった丁寧なトーン'
+                    }
+                };
+                const toneLabel = currentLanguage === 'ko' ? '톤앤매너' : currentLanguage === 'en' ? 'Tone' : 'トーン';
+                prompt += `- ${toneLabel}: ${toneMap[currentLanguage][tone]}\n`;
+
+                if (guidelines.length > 0) {
+                    const additionalLabel = currentLanguage === 'ko' ? '추가 기준' : currentLanguage === 'en' ? 'Additional Guidelines' : '追加基準';
+                    prompt += `- ${additionalLabel}:\n`;
+                    guidelines.forEach(g => prompt += `  * ${g}\n`);
+                }
+
+                if (currentLanguage === 'ko') {
+                    prompt += `\n위 기준을 모두 반영하여 고객에게 보낼 댓글을 한국어로 작성해주세요. 댓글 내용만 작성하고 부가 설명은 하지 마세요.`;
+                } else if (currentLanguage === 'en') {
+                    prompt += `\nPlease write a reply to the customer in English reflecting all the above guidelines. Write only the reply content without additional explanations.`;
+                } else if (currentLanguage === 'ja') {
+                    prompt += `\n上記の基準をすべて反映して、お客様への返信を日本語で作成してください。返信内容のみを作成し、追加の説明はしないでください。`;
+                }
+
+                // n8n Webhook 호출
+                const N8N_WEBHOOK_URL = 'https://komorevee.app.n8n.cloud/webhook/review-reply';
+                
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.reply) {
+                    const generatedReply = data.reply.trim();
+                    resultBox.textContent = generatedReply;
+                    resultBox.classList.remove('empty');
+                    copyBtn.disabled = false;
+                } else {
+                    throw new Error('응답 생성 실패');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultBox.innerHTML = `<div style="color: #dc3545; text-align: center;">${translations[currentLanguage].errorMessage}</div>`;
+                resultBox.classList.add('empty');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = translations[currentLanguage].generateBtn;
+            }
+        }
+
+        // 복사 기능
+        function copyToClipboard() {
+            const resultBox = document.getElementById('resultBox');
+            const text = resultBox.textContent;
+            
+            // 최신 Clipboard API 사용
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast();
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    // Fallback method
+                    fallbackCopyToClipboard(text);
+                });
+            } else {
+                // 구형 브라우저 fallback
+                fallbackCopyToClipboard(text);
+            }
+        }
+
+        // Fallback 복사 메서드
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert(translations[currentLanguage].toastCopied);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Toast 메시지 표시
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.textContent = translations[currentLanguage].toastCopied;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 엔터키로 생성
+        document.getElementById('reviewContent').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generateReply();
+            }
+        });
+    </script>
+</body>
+</html>
