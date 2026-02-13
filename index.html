@@ -861,6 +861,9 @@
 
                 const data = await response.json();
                 
+                console.log('Response status:', response.status);
+                console.log('Response data:', data);
+                
                 if (data.reply) {
                     const generatedReply = data.reply.trim();
                     resultBox.textContent = generatedReply;
@@ -872,7 +875,8 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                resultBox.innerHTML = `<div style="color: #dc3545; text-align: center;">${translations[currentLanguage].errorMessage}</div>`;
+                console.error('Error details:', error.message);
+                resultBox.innerHTML = `<div style="color: #dc3545; text-align: center;">${translations[currentLanguage].errorMessage}<br><small>Error: ${error.message}</small></div>`;
                 resultBox.classList.add('empty');
             } finally {
                 generateBtn.disabled = false;
