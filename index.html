@@ -82,6 +82,19 @@
             font-size: 14px;
         }
 
+        .usage-notice {
+            background: #fff9e6;
+            border: 1px solid #ffe9a3;
+            color: #856404;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            text-align: left;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
         .content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -456,6 +469,11 @@
                 💬 댓글 제안 생성하기
             </button>
 
+            <div class="usage-notice" data-i18n="usageNotice">⚠️ 사용 시 유의사항 ⚠️
+• AI 제안 문구는 참고용으로 활용해 주세요.
+• 실제 정책, 보상, 일정과 일치하는지 반드시 확인 후 수정하여 사용해 주세요.
+• 확정되지 않은 조치나 보상을 안내하지 않도록 주의해 주세요.</div>
+
             <div class="result-box empty" id="resultBox" data-i18n="resultEmpty">
                 생성된 댓글이 여기에 표시됩니다
             </div>
@@ -481,6 +499,7 @@
             ko: {
                 title: '📝 게임 스토어 리뷰 댓글 작성 도우미',
                 subtitle: '리뷰 내용과 작성 기준을 입력하면 적절한 댓글을 자동으로 제안해드립니다',
+                usageNotice: '⚠️ 사용 시 유의사항 ⚠️\n• AI 제안 문구는 참고용으로 활용해 주세요.\n• 실제 정책, 보상, 일정과 일치하는지 반드시 확인 후 수정하여 사용해 주세요.\n• 확정되지 않은 조치나 보상을 안내하지 않도록 주의해 주세요.',
                 reviewInfo: '리뷰 정보',
                 rating: '리뷰 평점',
                 reviewContent: '리뷰 내용',
@@ -520,6 +539,7 @@
             en: {
                 title: '📝 Game Store Review Reply Assistant',
                 subtitle: 'Enter review details and writing guidelines to automatically generate appropriate replies',
+                usageNotice: '⚠️ Important Notice ⚠️\n• AI-generated text is for reference only.\n• Always verify alignment with actual policies, rewards, and schedules before use.\n• Avoid mentioning unconfirmed actions or rewards.',
                 reviewInfo: 'Review Information',
                 rating: 'Review Rating',
                 reviewContent: 'Review Content',
@@ -559,6 +579,7 @@
             ja: {
                 title: '📝 ゲームストアレビュー返信アシスタント',
                 subtitle: 'レビュー内容と作成基準を入力すると、適切な返信を自動的に提案します',
+                usageNotice: '⚠️ 使用時の注意事項 ⚠️\n• AI提案文は参考用としてご活用ください。\n• 実際のポリシー、報酬、スケジュールと一致するか必ず確認後、修正してご使用ください。\n• 確定していない措置や報酬を案内しないようご注意ください。',
                 reviewInfo: 'レビュー情報',
                 rating: 'レビュー評価',
                 reviewContent: 'レビュー内容',
